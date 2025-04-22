@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+*{
+    font-family: "Roboto", sans-serif;
+}
+
+/* Width and height of the scrollbar */
+.scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  /* Background of the scrollbar track */
+  .scrollbar::-webkit-scrollbar-track {
+    background: #ffba00; 
+    border-radius: 10px;
+  }
+  
+  /* Scrollbar handle */
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #ffba00; 
+    border-radius: 10px;
+  }
+  
+  /* Scrollbar handle on hover */
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ffba00; 
+  }
+  
