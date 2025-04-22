@@ -46,21 +46,6 @@ const TaskTable = () => {
     fetchUserData();
   }, []);
 
-  // const handleAddNewUser = () => {
-  //   setTasks((prev) => [
-  //     ...prev,
-  //     {
-  //       id: count,
-  //       name: "",
-  //       designation: "",
-  //       department: "",
-  //       empLayer: "",
-  //       isNew: true,
-  //     },
-  //   ]);
-  //   setCount(count + 1);
-  // };
-
   const handleChildData = (data) => {
     setTasks((prev) => [...prev, data]);
   };
@@ -123,7 +108,7 @@ const TaskTable = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search task..."
-                className="w-96 py-1 pl-6 border bg-gray-200 rounded-full focus:outline-none focus:ring-2"
+                className="w-96 py-1 pl-6 px-1 border-none bg-gray-200 rounded-full hover:border-[#ffba00] focus:outline-none focus:ring-2 focus:ring-[#ffba00]"
               />
             </div>
 
@@ -160,7 +145,7 @@ const TaskTable = () => {
 
             <button
               onClick={() => setShowForm(true)}
-              className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700"
+              className="bg-[#ffba00] text-white px-6 py-2 rounded-full hover:scale-110"
             >
               Create User
             </button>
@@ -176,7 +161,7 @@ const TaskTable = () => {
                       S no.
                     </th>
                     <th className="border px-4 border-yellow-500 py-2">User</th>
-                    <th className="border px-4 border-yellow-500 py-2">
+                    <th className="">
                       Designation
                     </th>
                     <th className="border px-4 border-yellow-500 py-2">
@@ -216,15 +201,9 @@ const TaskTable = () => {
                       </td>
                       <td className="border px-4 border-yellow-500 py-2">
                         <div className="flex justify-center space-x-2">
-                          {/* <button
-                            onClick={() => handleEdit(user._id)}
-                            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
-                          >
-                            Edit
-                          </button> */}
                           <button
                             onClick={() => handleDelete(user._id)}
-                            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
+                            className="bg-[#ffba00] text-white px-5 py-1 rounded-[1rem] hover:scale-110"
                           >
                             Delete
                           </button>
@@ -236,13 +215,6 @@ const TaskTable = () => {
               </table>
             </div>
           </div>
-
-          {/* <button
-            onClick={handleAddNewUser}
-            className="mt-4 px-6 py-2 bg-yellow-500 border border-yellow-500 rounded-full"
-          >
-            + Add New User
-          </button> */}
         </div>
       </div>
     </>

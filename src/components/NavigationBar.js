@@ -57,7 +57,7 @@ const NavigationBar = () => {
             onClick={goToDesignation}
             className={`px-4 py-3 font-semibold hover:bg-gray-700 hover:text-white cursor-pointer hover:transition duration-150 ${pathname === "/designation" ? "bg-gray-700 text-white" : ""}`}
           >
-           Designation
+           Departments
           </div>
         </div>
         <div className=" px-8 py-3  font-semibold  text-white ">

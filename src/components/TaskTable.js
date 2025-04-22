@@ -147,7 +147,7 @@ const rowRefs = useRef({});
               value={searchTerm}
               onChange={(e)=>setSearchTerm(e.target.value)}
               placeholder="Search by Client Name or Project Name"
-              className="w-96 py-1 pl-6 px-1 border border-none bg-gray-200 rounded-full focus:outline-none focus:ring-2"
+              className="w-96 py-1 pl-6 px-1 border-none bg-gray-200 rounded-full hover:border-[#ffba00] focus:outline-none focus:ring-2 focus:ring-[#ffba00]"
             /> 
           </div>
           { searchTerm &&
@@ -187,14 +187,14 @@ const rowRefs = useRef({});
           <div>
             <button
               onClick={() => setShowForm(!showForm)}
-              className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700 transition duration-200 "
+              className="bg-[#ffba00] text-white px-6 py-2 rounded-full hover:scale-110 transition duration-200 "
             >
               Create Task
             </button>
           </div>
         </div>
 
-{/* Task Table */}
+        {/* Task Table */}
         <div className="h-[44vh] w-fit overflow-y-auto scroll scrollbar">
           <div className=" rounded-[20px] border-2 border-[#ffba00] h-[44vh] me-2 overflow-x-hidden">
           <table className="  text-center w-7xl " style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -223,135 +223,6 @@ const rowRefs = useRef({});
               </tr>
             </thead>
             <tbody className="w-8xl text-sm">
-              {/* {tasks.map((task, index) => (
-                <tr key={task.id} className={`bg-white hover:bg-yellow-100 ${
-                  highlightedRow === task.id ? "bg-yellow-300 animate-pulse" : ""
-                }`} ref={(el) => (rowRefs.current[task.id] = el)} >
-                  
-                  <td className="border-2 border-[#ffba00] px-4 py-1 ">
-                    {index + 1}
-                  </td>
-                  <td className="border-2 border-[#ffba00] px-4 py-1 ">
-                    {task.client}
-                  </td>
-                  <td className="border-2 border-[#ffba00] px-4 py-1 ">
-                    {task.project}
-                  </td>
-                  <td className="border-2 border-[#ffba00] px-4 py-1 ">
-                    {task.subject}
-                  </td>
-                  <td className="border-2 border-[#ffba00] px-4 py-1 ">
-                    {task.createdBy}
-                  </td>
-                  <td className="border-2 border-[#ffba00] px-4 py-1 ">
-                    <span className="bg-blue-500 text-sm block  text-white px-3 py-1 rounded-full">
-                      {task.assignedTo}
-                    </span>
-                  </td>
-                  <td className="border-2 border-[#ffba00] px-4 py-1">
-                    {task.startDate}
-                    <FontAwesomeIcon
-                      icon={faCalendarDays}
-                      onClick={() => setActivePicker({ id: task.id, field: "startDate" })}
-                      className="text-yellow-600 cursor-pointer lg:ms-1.5"
-                     />
-
-                      {activePicker.id === task.id && activePicker.field === "startDate" && (
-                        <div className="absolute z-50 mt-2">
-                          <DatePicker
-                            selected={new Date()}
-                            onChange={(date) => {
-                              const formattedDate = date.toLocaleDateString("en-GB");
-                              setTasks((prev) =>
-                                prev.map((t) =>
-                                  t.id === task.id ? { ...t, startDate: formattedDate } : t
-                                )
-                              );
-                              setActivePicker({ id: null, field: null });
-                            }}
-                            inline
-                          />
-                        </div>
-                      )}
-                  </td>
-                  <td className="border-2 border-[#ffba00] px-4 py-1">
-                    {task.deadline}
-                    <FontAwesomeIcon
-                      icon={faCalendarDays}
-                      onClick={() => setActivePicker({ id: task.id, field: "deadline" })}
-                      className="text-yellow-600 cursor-pointer lg:ms-1.5"
-                     />
-                     {activePicker.id === task.id && activePicker.field === "deadline" && (
-                        <div className="absolute z-50 mt-2">
-                          <DatePicker
-                            selected={new Date()}
-                            onChange={(date) => {
-                              const formattedDate = date.toLocaleDateString("en-GB");
-                              setTasks((prev) =>
-                                prev.map((t) =>
-                                  t.id === task.id ? { ...t, deadline: formattedDate } : t
-                                )
-                              );
-                              setActivePicker({ id: null, field: null });
-                            }}
-                            inline
-                          />
-                        </div>
-                      )}
-                  </td>
-                  
-                  <td className="border-2 border-[#ffba00] px-4 py-1">
-                  {task.time} 
-                  </td>
-                 
-                  <td className="border-2 border-[#ffba00] px-1 relative">
-                    <span
-                      className={`text-white px-2 py-1 rounded-full cursor-pointer text-center ${
-                        task.status === "Done"
-                          ? "bg-green-500"
-                        : task.status === "Pending"
-                          ? "bg-purple-500"
-                          : task.status === "Late"
-                          ? "bg-red-500"
-                          : task.status === "Open"
-                        ? "bg-[#ffba00]"
-                          : task.status === "In Review"
-                          ? "bg-blue-500"
-                          : "bg-gray-500"
-                        }`}
-                      onClick={() => setShowOption(task.id)} // Change to task.id based logic
-                    >
-                      {task.status} <FontAwesomeIcon icon={faCaretDown} />
-                    </span>
-                 
-                  {showOPtion === task.id && (
-                   <div className="border mt-1 left-[-50%] shadow-md w-max text-center bg-[#616262] rounded-[20px]  text-white px-4py-1 py-2 text-lg px-[1.5rem] absolute z-9 flex flex-col items-center">
-                     {statuses.map((status) => (
-                       <div
-                          key={status}
-                          onClick={() => {
-                            statusHandler(task.id, status);
-                            setShowOption(null);
-                          }}
-                          className="cursor-pointer py-1 text-sm px-[3rem] w-full hover:bg-[#ffba00] hover:rounded-full"
-                        >
-                          {status}
-                        </div>
-                      ))}
-                     </div>
-                    )}
-                  </td>
-
-                  <td className="border-2 border-[#ffba00] px-4 py-1">
-                    <button
-                      onClick={() => handleClose(task.id)}
-                      className="bg-red-500 text-white px-4 py-1 rounded-full text-sm  hover:bg-red-700 transition duration-200 cursor-pointer"
-                    >
-                      Close
-                    </button>
-                  </td>
-                </tr>
-              ))} */}
               {tasks.map((task, index) => (
                 <tr 
                   key={task.id}
@@ -476,11 +347,11 @@ const rowRefs = useRef({});
                     <span
                       className={`text-white px-2 py-1 rounded-full cursor-pointer text-center ${
                         task.status === "Done"
-                          ? "bg-green-500"
+                          ? "bg-[#ffba00]"
                         : task.status === "Pending"
                           ? "bg-purple-500"
                           : task.status === "Late"
-                          ? "bg-red-500"
+                          ? "bg-[#ffba00]"
                           : task.status === "Open"
                         ? "bg-[#ffba00]"
                           : task.status === "In Review"
@@ -512,7 +383,7 @@ const rowRefs = useRef({});
                   <td className="border-2 border-[#ffba00] px-4 py-1">
                     <button
                       onClick={() => handleClose(task.id)}
-                      className="bg-red-500 text-white px-4 py-1 rounded-full text-sm  hover:bg-red-700 transition duration-200 cursor-pointer"
+                      className="bg-[#ffba00] text-white px-4 py-1 rounded-full text-sm  hover:scale-110 transition duration-200 cursor-pointer"
                     >
                       Close
                     </button>

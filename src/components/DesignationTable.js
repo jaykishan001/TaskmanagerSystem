@@ -132,8 +132,6 @@ const rowRefs = useRef({});
         onClose={handlehiddeForm}/>
    </div>
     }
-   
-    
     <div className="flex relative mx-auto ">
       
       <div className="  mx-auto w-7xl">
@@ -142,16 +140,15 @@ const rowRefs = useRef({});
           <div className="flex items-center">
             <p className=" pr-2 text-lg font-semibold">Search :</p>
             <input
-
               value={searchTerm}
               onChange={(e)=>setSearchTerm(e.target.value)}
               placeholder="Search by Client Name or Project Name"
-              className="w-96 py-1 pl-6 px-1 border border-none bg-gray-200 rounded-full focus:outline-none focus:ring-2"
+              className="w-96 py-1 pl-6 px-1 border-none bg-gray-200 rounded-full hover:border-[#ffba00] focus:outline-none focus:ring-2 focus:ring-[#ffba00]"
             /> 
           </div>
           { searchTerm &&
           <div className="w-96 max-h-[200px] overflow-y-auto rounded-[15px] absolute top-[5vh] left-[11vw] py-2 bg-white border-2 border-[#ffba00] z-50 shadow-md">
-          {filteredSuggestions.map((suggestion, i) => (
+          {filteredSuggestions > 0 || filteredSuggestions.map((suggestion, i) => (
             <div
               key={i}
               onClick={() => {
@@ -186,9 +183,9 @@ const rowRefs = useRef({});
           <div>
             <button
               onClick={() => setShowForm(!showForm)}
-              className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700 transition duration-200 "
+              className="bg-[#ffba00] text-white px-6 py-2 rounded-full hover:scale-110 transition duration-200 "
             >
-              Create Designation
+              Create Departments
             </button>
           </div>
         </div>
@@ -201,7 +198,7 @@ const rowRefs = useRef({});
               <tr className="text-[1rem]">
                 {[
                   "S no.",
-                  "Designation",
+                  "Departments",
                   "Client",
                   "Project Name",
                   "Subject",

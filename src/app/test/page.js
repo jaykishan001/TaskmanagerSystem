@@ -69,13 +69,13 @@ const TaskTable = () => {
             <p className=" pr-2 text-lg font-semibold">Search:</p>
             <input
               placeholder="Search task..."
-              className="w-96 py-1 pl-6 px-1 border border-none bg-gray-200 rounded-full focus:outline-none focus:ring-2"
+              className="w-96 py-1 pl-6 px-1 border-none bg-gray-200 rounded-full hover:border-[#ffba00] focus:outline-none focus:ring-2 focus:ring-[#ffba00]"
             />
           </div>
           <div>
             <button
               onClick={() => setShowForm(!showForm)}
-              className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700 transition duration-200 "
+              className="bg-[#ffba00] text-white px-6 py-2 rounded-full hover:scale-110 transition duration-200 "
             >
               Create Task
             </button>
@@ -128,7 +128,7 @@ const TaskTable = () => {
                   <td className="border-2 border-[#ffba00] px-4 py-1">
                     <button
                       onClick={() => handleClose(task.id)}
-                      className="bg-red-500 text-white px-4 py-1 rounded-full text-sm  hover:bg-red-700 transition duration-200 cursor-pointer"
+                      className="bg-[#ffba00] text-white px-4 py-1 rounded-full text-sm  hover:scale-110 transition duration-200 cursor-pointer"
                     >
                       Close
                     </button>

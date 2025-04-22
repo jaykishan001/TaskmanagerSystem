@@ -196,7 +196,7 @@ const TaskTable = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search task..."
-                className="w-96 py-1 pl-6 bg-gray-200 rounded-full focus:outline-none focus:ring-2"
+                className="w-96 py-1 pl-6 px-1 border-none bg-gray-200 rounded-full hover:border-[#ffba00] focus:outline-none focus:ring-2 focus:ring-[#ffba00]"
               />
             </div>
 
@@ -219,7 +219,7 @@ const TaskTable = () => {
 
             <button
               onClick={() => setShowForm(true)}
-              className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700"
+              className="bg-[#ffba00] text-white px-6 py-2 rounded-full hover:scale-110"
             >
               Create Project
             </button>
@@ -425,9 +425,9 @@ const TaskTable = () => {
                         onClick={() => setStatusDropdown(task.id)}
                         className={`cursor-pointer px-2 py-1 rounded-full text-white ${
                           {
-                            Done: "bg-green-500",
+                            Done: "bg-[#ffba00]",
                             Pending: "bg-purple-500",
-                            Late: "bg-red-500",
+                            Late: "bg-[#ffba00]",
                             Open: "bg-yellow-500",
                             "In Review": "bg-blue-500",
                           }[task.status] || "bg-gray-500"
@@ -455,7 +455,7 @@ const TaskTable = () => {
                     <td className="border px-2 border-[#ffba00]">
                       <button
                         onClick={() => handleDelete(task.id)}
-                        className="bg-red-500 text-white px-3 py-1 my-1 rounded-full text-sm hover:bg-red-700"
+                        className="bg-[#ffba00] text-white px-3 py-1 my-1 rounded-full text-sm hover:scale-110"
                       >
                         Close
                       </button>

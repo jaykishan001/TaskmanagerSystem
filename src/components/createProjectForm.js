@@ -49,25 +49,32 @@ export default function TaskForm({onData, onClose}) {
   };
   
   return (
-    <form
+<form
   onSubmit={handleSubmit}
-  className="p-6 max-w-2xl mx-auto space-y-5 border rounded-2xl bg-white shadow-[0_10px_60px_rgba(0,0,0,0.4)] absolute z-[999]"
+  className="p-8 max-w-3xl top-[-20vh] mx-auto space-y-8 border border-gray-200 rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.1)] relative z-[999]"
 >
-    <div className="w-full flex justify-end ">
-        <span onClick={onClose} className="hover:scale-[120%] transition-transform duration-500 hover:rotate-[270deg] ">
-            <FontAwesomeIcon icon={faXmark} className="text-[#ffba00] cursor-pointer" />
-        </span>
-    </div>
-  <h2 className="text-2xl font-semibold text-center text-gray-800">📝 Create New Task</h2>
+  {/* Close Button */}
+  <div className="flex justify-end">
+    <span
+      onClick={onClose}
+      className="hover:scale-125 transition-transform duration-300 hover:rotate-180"
+    >
+      <FontAwesomeIcon icon={faXmark} className="text-[#ffba00] text-xl cursor-pointer" />
+    </span>
+  </div>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  {/* Form Title */}
+  <h2 className="text-3xl font-bold text-center text-gray-800">📝 Create New Task</h2>
+
+  {/* Inputs */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
     <input
       type="text"
       name="client"
       value={formData.client}
       onChange={handleChange}
       placeholder="Client"
-      className="input-field"
+      className="px-5 py-3 rounded-lg border border-[#ffba00] bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#ffba00] placeholder-gray-400 text-gray-800"
     />
     <input
       type="text"
@@ -75,7 +82,7 @@ export default function TaskForm({onData, onClose}) {
       value={formData.project}
       onChange={handleChange}
       placeholder="Project Name"
-      className="input-field"
+      className="px-5 py-3 rounded-lg border border-[#ffba00] bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#ffba00] placeholder-gray-400 text-gray-800"
     />
     <input
       type="text"
@@ -83,7 +90,7 @@ export default function TaskForm({onData, onClose}) {
       value={formData.subject}
       onChange={handleChange}
       placeholder="Subject"
-      className="input-field"
+      className="px-5 py-3 rounded-lg border border-[#ffba00] bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#ffba00] placeholder-gray-400 text-gray-800"
     />
     <input
       type="text"
@@ -91,7 +98,7 @@ export default function TaskForm({onData, onClose}) {
       value={formData.createdBy}
       onChange={handleChange}
       placeholder="Created By"
-      className="input-field"
+      className="px-5 py-3 rounded-lg border border-[#ffba00] bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#ffba00] placeholder-gray-400 text-gray-800"
     />
     <input
       type="text"
@@ -99,41 +106,40 @@ export default function TaskForm({onData, onClose}) {
       value={formData.assignedTo}
       onChange={handleChange}
       placeholder="Assign To"
-      className="input-field"
+      className="px-5 py-3 rounded-lg border border-[#ffba00] bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#ffba00] placeholder-gray-400 text-gray-800"
     />
     <input
       type="date"
       name="startDate"
       value={formData.startDate}
       onChange={handleChange}
-      className="input-field"
+      className="px-5 py-3 rounded-lg border border-[#ffba00] bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#ffba00] text-gray-800"
     />
     <input
       type="date"
       name="deadline"
       value={formData.deadline}
       onChange={handleChange}
-      className="input-field"
+      className="px-5 py-3 rounded-lg border border-[#ffba00] bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#ffba00] text-gray-800"
     />
     <input
       type="time"
       name="time"
       value={formData.time}
       onChange={handleChange}
-      className="input-field"
+      className="px-5 py-3 rounded-lg border border-[#ffba00] bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#ffba00] text-gray-800"
     />
-
-   
   </div>
 
+  {/* Submit Button */}
   <button
-
     type="submit"
-    className="w-full bg-[#ffba00] hover:scale-[102%] text-white font-semibold py-3 rounded-xl transition-all duration-200"
+    className="w-full bg-[#ffba00] hover:bg-[#e6a900] text-white font-semibold py-3 rounded-[2rem] transition-all duration-300"
   >
-    Add Task
+    ➕ Add Task
   </button>
 </form>
+
 
   );
 }

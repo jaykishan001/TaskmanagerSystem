@@ -51,7 +51,7 @@ export default function TaskForm({onData, onClose}) {
   return (
     <form
   onSubmit={handleSubmit}
-  className="p-6 max-w-2xl mx-auto space-y-5 border rounded-2xl bg-white shadow-[0_10px_60px_rgba(0,0,0,0.4)] absolute z-[999]"
+  className="p-6 max-w-2xl mx-auto space-y-5 top-[-20vh] border rounded-2xl bg-white shadow-[0_10px_60px_rgba(0,0,0,0.4)] absolute z-[999]"
 >
     <div className="w-full flex justify-end ">
         <span onClick={onClose} className="hover:scale-[120%] transition-transform duration-500 hover:rotate-[270deg] ">
