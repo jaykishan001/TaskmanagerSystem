@@ -1,243 +1,149 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown ,faCalendarDays} from '@fortawesome/free-solid-svg-icons';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { faClock } from "@fortawesome/free-solid-svg-icons";
-
-import CreateTask from "./createDesignationForm"
-import { useRef } from "react";
-import DesignationForm from "./createDesignationForm";
-
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import CreateTask from "./createDesignationForm";
 
 const TaskTable = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [tasks, setTasks] = useState([
-   
-  ]);
-
-  const statuses = ["Done", "Pending", "Late", "In Review", "Open"];
-
-  const [selectedStatus, setSelectedStatus] = useState("Open");
+  const [designations, setDesignations] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [count, setCount] = useState(tasks.length + 1);
-  const [showOPtion, setShowOption] = useState(null);
-  const [showCalender, setShowCalender] = useState(false)
-  const [activePicker, setActivePicker] = useState({ id: null, field: null });
-  const [searchTerm, setSearchTerm]= useState("")
-  const [showSuggstion, setShowSuggstion] = useState(false)
+  const [showSuggestion, setShowSuggestion] = useState(false);
   const [highlightedRow, setHighlightedRow] = useState(null);
+  const rowRefs = useRef({});
 
-
-// Create a ref object to store refs for each task row
-const rowRefs = useRef({});
-
-
-  const [newTask, setNewTask] = useState({
-    client: "",
-    project: "",
-    subject: "",
-    createdBy: "",
-    assignedTo: "",
-    startDate: "",
-    time: "",
-    deadline: "",
-    status: "Open",
-    Designation: ""
-  });
-
-  const statusHandler = (id, newStatus) => {
-    // console.log(id);
-    // console.log(newStatus);
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, status: newStatus } : task
-      )
-    );
+  const fetchDesignation = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/user/signup/Designation");
+      setDesignations(res.data.data);
+    } catch (error) {
+      console.error("Error while fetching designation", error);
+    }
   };
-
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setNewTask({
-      id: count,
-      client: "",
-      project: "",
-      subject: "",
-      createdBy: "",
-      assignedTo: "",
-      startDate: "",
-      time: "",
-      deadline: "",
-      status: "Open",
-      Designation: ""
-    });
-    setTasks([...tasks, newTask]);
-    setCount(count + 1);
-    setShowForm(false);
-
-    console.log(count);
-  };
-
-  const handleClose = (id) => {
-    setTasks(tasks.filter((task) => task.id != id));
-  };
-
-  const handleChildData = (data)=>{
-    setTasks((prev) => [...prev, data]); 
-  }
-  const handlehiddeForm =() =>{
-    setShowForm(false)
-  }
 
   useEffect(() => {
-    if (searchTerm.trim().length > 0) {
-      setShowSuggstion(true);
-    } else {
-      setShowSuggstion(false);
-    }
+    fetchDesignation();
+  }, []);
+
+  const filteredSuggestions = designations.filter(
+    (item) =>
+      item.designation &&
+      item.designation.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  useEffect(() => {
+    setShowSuggestion(searchTerm.trim().length > 0);
   }, [searchTerm]);
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this designation?");
+    if (!confirmDelete) return;
 
-  const handleAddNewUser = () => {
-    setTasks((prev) => [
-      ...prev,
-      {
-        id: count,
-        client: "",
-        project: "",
-        subject: "",
-        createdBy: "",
-        assignedTo: "",
-        startDate: "",
-        deadline: "",
-        time: "",
-        status: "",
-        isNew: true,
-        Designation: ""
-      },
-    ]);
-    setCount(count + 1);
+    try {
+      await axios.delete(`http://localhost:3000/api/user/signup/Designation?id=${id}`);
+      fetchDesignation();
+    } catch (error) {
+      console.error("Error deleting designation:", error);
+      alert("Failed to delete designation");
+    }
   };
-  
+
+  const handleAdd = () => {
+    setShowForm(true);
+  };
+
+  const handleChildData = () => {
+    setShowForm(false);
+    fetchDesignation();
+  };
 
   return (
-    <>
-    {showForm &&
-     <div className="absolute w-[100vw] h-fit flex justify-center items-center">
-     <CreateTask
-        onData={handleChildData}
-        onClose={handlehiddeForm}/>
-   </div>
-    }
-   
-    
-    <div className="flex relative mx-auto ">
-      
-      <div className="  mx-auto w-7xl">
-        {/* Search Bar */}
+    <div className="flex relative mx-auto justify-center items-center w-7xl">
+      {showForm && (
+        <div className="absolute w-full h-fit flex justify-center items-center z-50">
+          <CreateTask onData={handleChildData} onClose={() => setShowForm(false)} />
+        </div>
+      )}
+
+      <div className="w-full">
         <div className="flex justify-between mb-3">
           <div className="flex items-center">
-            <p className=" pr-2 text-lg font-semibold">Search :</p>
+            <p className="pr-2 text-lg font-semibold">Search :</p>
             <input
-
               value={searchTerm}
-              onChange={(e)=>setSearchTerm(e.target.value)}
-              placeholder="Search by Client Name or Project Name"
-              className="w-96 py-1 pl-6 px-1 border border-none bg-gray-200 rounded-full focus:outline-none focus:ring-2"
-            /> 
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search designation..."
+              className="w-96 py-1 pl-6 border bg-gray-200 rounded-full focus:outline-none focus:ring-2"
+            />
           </div>
-          { searchTerm &&
-          <div className="w-96 max-h-[200px] overflow-y-auto rounded-[15px] absolute top-[5vh] left-[11vw] py-2 bg-white border-2 border-[#ffba00] z-50 shadow-md">
-          {filteredSuggestions.map((suggestion, i) => (
-            <div
-              key={i}
-              onClick={() => {
-                setSearchTerm(suggestion.subject);  // Or project/client etc.
-                setShowSuggstion(false);
 
-                const targetRow = rowRefs.current[suggestion.id];
-                if (targetRow) {
-                  targetRow.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                  });
-                }
-                // 👇 Highlight row for some time
-                setHighlightedRow(suggestion.id);
-                setTimeout(() => {
-                  setHighlightedRow(null);
-                }, 2000); // highlight for 2 seconds
-              }}
-              className="cursor-pointer px-4 py-2 hover:bg-[#ffba00]  transition-all"
-            >
-              {suggestion.client} - {suggestion.project}
+          <button
+            onClick={handleAdd}
+            className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700 transition duration-200"
+          >
+            Create Designation
+          </button>
+
+          {searchTerm && showSuggestion && (
+            <div className="w-96 max-h-48 overflow-y-auto rounded-lg absolute top-12 left-28 py-2 bg-white border-2 border-yellow-500 z-50 shadow-md">
+              {filteredSuggestions.map((suggestion) => (
+                <div
+                  key={suggestion._id}
+                  onClick={() => {
+                    setSearchTerm(suggestion.designation);
+                    setShowSuggestion(false);
+                    const targetRow = rowRefs.current[suggestion._id];
+                    if (targetRow) {
+                      targetRow.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                    setHighlightedRow(suggestion._id);
+                    setTimeout(() => setHighlightedRow(null), 2000);
+                  }}
+                  className="cursor-pointer px-4 py-2 hover:bg-yellow-500 transition-all"
+                >
+                  {suggestion.designation}
+                </div>
+              ))}
+              {filteredSuggestions.length === 0 && (
+                <div className="text-center text-gray-600 py-2">No results found.</div>
+              )}
             </div>
-          ))}
-          {filteredSuggestions.length === 0 && (
-            <div className="text-center text-gray-600 py-2">No results found.</div>
           )}
         </div>
 
-          }
-          
-          <div>
-            <button
-              onClick={() => setShowForm(!showForm)}
-              className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700 transition duration-200 "
-            >
-              Create Designation
-            </button>
-          </div>
-        </div>
-
-        {/* Task Table */}
-        <div className="h-[44vh] w-fit overflow-y-auto scroll scrollbar">
-          <div className=" rounded-[20px] border-2 border-[#ffba00] h-[44vh] me-2 overflow-x-hidden">
-          <table className="  text-center w-7xl " style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead className=" text-sm">
-              <tr className="text-[1rem]">
-                {[
-                  "S no.",
-                  "Designation",
-                  "Client",
-                  "Project Name",
-                  "Subject",
-                  "Created By",
-                  "Assign To",
-                  "Start Date",
-                  "Deadline",
-                  "Time",
-                  "Status",
-                  "Action",
-                ].map((heading) => (
-                  <th
-                    key={heading}
-                    className="border border-[#ffba00] px-4 py-2"
-                  >
-                    {heading}
-                  </th>
-                ))}
+        <div className="h-60 w-full overflow-y-auto scrollbar rounded-lg border-2 border-yellow-500">
+          <table className="text-center w-full">
+            <thead className="text-sm">
+              <tr className="text-base bg-yellow-100">
+                <th className="border px-4 border-yellow-500 py-2">S no.</th>
+                <th className="border px-4 border-yellow-500 py-2">Designation</th>
+                <th className="border px-4 border-yellow-500 py-2">Actions</th>
               </tr>
             </thead>
-            <tbody className="w-8xl text-sm">
-            
-              
-                          </tbody>
+            <tbody className="text-sm">
+              {designations.map((item, index) => (
+                <tr
+                  key={item._id}
+                  ref={(el) => (rowRefs.current[item._id] = el)}
+                  className={highlightedRow === item._id ? "bg-yellow-200" : ""}
+                >
+                  <td className="border px-4 border-yellow-500 py-2">{index + 1}</td>
+                  <td className="border px-4 border-yellow-500 py-2">{item.designation}</td>
+                  <td className="border px-4 border-yellow-500 py-2">
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="text-white bg-red-500 px-3 py-1 rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
-          </div>
         </div>
-        <button
-            onClick={handleAddNewUser}
-            className="mt-4 px-6 py-2 bg-[#ffba00] border border-[#ffba00] rounded-full"
-          >
-            + Add New User
-          </button>
       </div>
     </div>
-    </>
   );
 };
 

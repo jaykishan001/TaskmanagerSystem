@@ -1,12 +1,28 @@
 "use client";
 import Logo from "@assets/Logo.jpeg";
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";;
 import { usePathname } from "next/navigation"; // Correct hook
+import { useEffect, useState } from "react";
 
 const NavigationBar = () => {
   const router = useRouter();
   const pathname = usePathname(); // Get current path
+  const [totalCount, setTotalCount] = useState(0);
+
+  const fetchTask = async() => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/user/signup/tasks")
+      setTotalCount(response.data.result.length)
+    } catch (error) {
+      console.log("error",error)
+    }
+  }
+
+  useEffect(()=> {
+    fetchTask();
+  },[])
 
   const goToUsers = () => {
     router.push("/users");
@@ -61,7 +77,7 @@ const NavigationBar = () => {
           </div>
         </div>
         <div className=" px-8 py-3  font-semibold  text-white ">
-          Total Active Tasks: <span className=" font-bold text-black">7</span>
+          Total Active Tasks: <span className=" font-bold text-black">{totalCount}</span>
         </div>
       </div>
     </div>

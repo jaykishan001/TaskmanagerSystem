@@ -1,34 +1,17 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretDown, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CreateTask from "./createProjectForm";
 import axios from "axios";
+import DesignationForm from "./createDesignationForm";
 
-const TaskTable = () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      client: "Jungle morels",
-      projectName: "Office Operations",
-      subject: "Making salaries",
-      createdBy: "Suraj Poswal",
-      assignTo: "Aman ",
-      assignToSurname:"Negi",
-      inputsReceived: "21/03/25",
-      startDate: "21/03/25",
-      deadline: "24/03/25",
-      time: "6:43 pm",
-      status: "Open",
-      sentToClient: "Close",
-      feedbackReceived: "21/03/25",
-      feedbackSent: "21/03/25"
-    },
-  ]);
-
+const TaskTable = ({ designationOption }) => {
+  console.log("Designation of the user", designationOption);
+  const [tasks, setTasks] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [count, setCount] = useState(tasks.length + 1);
   const [activePicker, setActivePicker] = useState({ id: null, field: null });
@@ -37,11 +20,14 @@ const TaskTable = () => {
   const [highlightedRow, setHighlightedRow] = useState(null);
   const [statusDropdown, setStatusDropdown] = useState(null);
   const [assignDropdown, setAssignDropdown] = useState(null);
-  const [task, setTask] = useState([]);
+  const [assignedToUsers, setAssignedToUsers] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
 
   const fetchTask = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/user/signup/tasks");
+      const response = await axios.get(
+        "http://localhost:3000/api/user/signup/tasks"
+      );
       console.log("response from task table", response.data.result);
   
       const mappedTasks = response.data.result.map((t, index) => ({
@@ -51,27 +37,38 @@ const TaskTable = () => {
         subject: t.subject || "",
         createdBy: t.createdBy || "",
         assignTo: t.assignedTo || "",
+        assignToDesignation: t.assignToDesignation || "",
         assignToSurname: "",
-        inputsReceived: "",
+        inputsReceived: t.inputsReceived || "",
         startDate: t.startDate || "",
         deadline: t.deadline || "",
         time: t.time || "",
         status: t.status || "",
         sentToClient: "",
-        feedbackReceived: "",
-        feedbackSent: "",
+        feedbackReceived: t.feedbackReceived || "",
+        feedbackSent: t.feedbackSent || "",
       }));
-  
       setTasks(mappedTasks);
+      setFilteredTasks(mappedTasks);
     } catch (error) {
       console.log(error);
     }
   };
-  
-  
-  useEffect(()=> {
+
+  useEffect(() => {
+    if (designationOption === "All") {
+      setFilteredTasks(tasks);
+    } else {
+      const filtered = tasks.filter(
+        (task) => task.assignToDesignation === designationOption
+      );
+      setFilteredTasks(filtered);
+    }
+  }, [designationOption, tasks]);
+
+  useEffect(() => {
     fetchTask();
-  }, [])
+  }, []);
 
   const rowRefs = useRef({});
   const statuses = ["Done", "Pending", "Late", "In Review", "Open"];
@@ -80,28 +77,65 @@ const TaskTable = () => {
     setShowSuggestion(searchTerm.trim().length > 0);
   }, [searchTerm]);
 
-  const filteredSuggestions = tasks.filter(task =>
-    task.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    task.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    task.subject.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSuggestions = tasks.filter(
+    (task) =>
+      task.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.subject.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleStatusChange = (id, newStatus) => { 
-    setTasks(tasks.map(task => task.id === id ? { ...task, status: newStatus } : task));
+  const handleStatusChange = async (id, newStatus) => {
+    console.log("Id of the task", id, newStatus);
+    const response = await axios.put(
+      `http://localhost:3000/api/user/signup/tasks?id=${id}`,
+      { status: newStatus },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, status: newStatus } : task
+      )
+    );
     setStatusDropdown(null);
+    fetchTask();
   };
 
-  const handleCalendarChange = (id, field, date) => {
+  const handleCalendarChange = async (id, field, date) => {
     const formattedDate = date.toLocaleDateString("en-GB");
-    setTasks(tasks.map(task =>
-      task.id === id ? { ...task, [field]: formattedDate } : task
-    ));
+
+    console.log("field id date ", field, id, date);
+
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, [field]: formattedDate } : task
+      )
+    );
     setActivePicker({ id: null, field: null });
+
+    try {
+      await axios.put(
+        `http://localhost:3000/api/user/signup/tasks?id=${id}`,
+        { [field]: formattedDate },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      fetchTask();
+    } catch (error) {
+      console.error("Failed to update task date:", error);
+    }
   };
 
   const handleAddTask = (newTask) => {
-    setTasks(prev => [...prev, { ...newTask, id: count }]);
-    setCount(prev => prev + 1);
+    setTasks((prev) => [...prev, { ...newTask, id: count }]);
+    setCount((prev) => prev + 1);
     setShowForm(false);
   };
 
@@ -116,40 +150,58 @@ const TaskTable = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to close this task?"
+      );
+      if (!confirmDelete) return;
+
+      const response = await axios.delete(
+        `http://localhost:3000/api/user/signup/tasks?id=${id}`
+      );
+      console.log("Response of the user", response);
+      fetchTask();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("Failed to delete user");
+    }
   };
 
-  const handleAddNewUser = () => {
-    setTasks((prev) => [
-      ...prev,
-      {
-        id: count,
-        client: "",
-        projectName: "",
-        subject: "",
-        createdBy: "",
-        assignTo: "",
-        assignToSurname:"",
-        inputsReceived: "",
-        startDate: "",
-        deadline: "",
-        time: "",
-        status: "",
-        sentToClient: "",
-        feedbackReceived: "",
-        feedbackSent: "",
-        isNew: true,
-      },
-    ]);
-    setCount(count + 1);
+  const handleGetAssignedTo = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/user/signup/createuser"
+      );
+      console.log(
+        "response from assignedTo data from create tabel",
+        response.data.result
+      );
+      setAssignedToUsers(
+        response.data.result.map((user) => ({
+          ...user,
+          designation: user.designation || "",
+        }))
+      );
+    } catch (error) {
+      console.log("error", error);
+    }
   };
+
+  useEffect(() => {
+    handleGetAssignedTo();
+  }, []);
+
 
   return (
     <>
       {showForm && (
         <div className="absolute w-full flex justify-center z-50">
-          <CreateTask onData={handleAddTask} onClose={() => setShowForm(false)} />
+          <CreateTask
+            refreshAftersumbit = {fetchTask}
+            onData={handleAddTask}
+            onClose={() => setShowForm(false)}
+          />
         </div>
       )}
 
@@ -179,7 +231,9 @@ const TaskTable = () => {
                   </div>
                 ))}
                 {filteredSuggestions.length === 0 && (
-                  <div className="text-center text-gray-600 py-2">No results found.</div>
+                  <div className="text-center text-gray-600 py-2">
+                    No results found.
+                  </div>
                 )}
               </div>
             )}
@@ -198,85 +252,107 @@ const TaskTable = () => {
               <thead>
                 <tr>
                   {[
-                    "S No.", "Client", "Project Name", "Subject", "Created By", "Assign To",
-                    "Inputs Received", "Start Date", "Deadline", "Feedback Received", "Feedback Sent" ,"Time" , "Status",
+                    "S No.",
+                    "Client",
+                    "Project Name",
+                    "Subject",
+                    "Created By",
+                    "Assign To",
+                    "Assign To Designation",
+                    "Inputs Received",
+                    "Start Date",
+                    "Deadline",
+                    "Feedback Received",
+                    "Feedback Sent",
+                    "Time",
+                    "Status",
                     "Sent to Client",
                   ].map((head) => (
-                    <th key={head} className="border border-[#ffba00] px-2 py-1">{head}</th>
+                    <th key={head} className="border border-[#ffba00] px-2 py-1">
+                      {head}
+                    </th>
                   ))}
                 </tr>
               </thead>
-            <tbody>
-              {tasks.map((task, idx) => (
-                <tr
-                  key={task.id}           
-                  ref={(el) => (rowRefs.current[task.id] = el)}
-                  className={`bg-white hover:bg-yellow-100 ${
-                  highlightedRow === task.id ? "bg-yellow-300 animate-pulse" : ""
-                  }`}
-                >
-                  <td className="border border-[#ffba00] px-2">{idx + 1}</td>
-                
-                  {/* Editable Cell for Client */}
-                  <td className="border border-[#ffba00] px-2">
-                    {task.isNew ? (
-                      <input
-                        type="text"
-                        value={task.client}
-                        onChange={(e) =>
-                          setTasks((prev) =>
-                            prev.map((t) =>
-                              t.id === task.id ? { ...t, client: e.target.value } : t
-                            )
-                          )
-                        }
-                        className="w-full px-2 py-1 rounded"
-                      />
-                    ) : (
-                      task.client
-                    )}
-                  </td>
-                  
-                  {/* Project Name */}
-                  <td className="border border-[#ffba00] px-2">
-                    {task.isNew ? (
-                      <input
-                        type="text"
-                        value={task.projectName}
-                                   onChange={(e) =>
-                          setTasks((prev) =>
-                            prev.map((t) =>
-                            t.id === task.id ? { ...t, projectName: e.target.value } : t
-                            )
-                          )
-                        }
-                        className="w-full px-2 py-1 rounded"
-                      />
-                    ) : (
-                      task.projectName
-                    )}
-                  </td>
+              <tbody>
+                {filteredTasks.map((task, idx) => (
+                  <tr
+                    key={task.id}
+                    ref={(el) => (rowRefs.current[task.id] = el)}
+                    className={`bg-white hover:bg-yellow-100 ${
+                      highlightedRow === task.id
+                        ? "bg-yellow-300 animate-pulse"
+                        : ""
+                    }`}
+                  >
+                    <td className="border border-[#ffba00] px-2">{idx + 1}</td>
 
-                  {/* Subject */}
+                    {/* Editable Cell for Client */}
                     <td className="border border-[#ffba00] px-2">
-                                    {task.isNew ? (
-                      <input
-                        type="text"
-                        value={task.subject}
-                        onChange={(e) =>
-                          setTasks((prev) =>
-                            prev.map((t) =>
-                              t.id === task.id ? { ...t, subject: e.target.value } : t
+                      {task.isNew ? (
+                        <input
+                          type="text"
+                          value={task.client}
+                          onChange={(e) =>
+                            setTasks((prev) =>
+                              prev.map((t) =>
+                                t.id === task.id
+                                  ? { ...t, client: e.target.value }
+                                  : t
+                              )
                             )
-                          )
-                        }
-                        className="w-full px-2 py-1 rounded"
-                      />
-                    ) : (
-                      task.subject
-                    )}
+                          }
+                          className="w-full px-2 py-1 rounded"
+                        />
+                      ) : (
+                        task.client
+                      )}
                     </td>
-            
+
+                    {/* Project Name */}
+                    <td className="border border-[#ffba00] px-2">
+                      {task.isNew ? (
+                        <input
+                          type="text"
+                          value={task.projectName}
+                          onChange={(e) =>
+                            setTasks((prev) =>
+                              prev.map((t) =>
+                                t.id === task.id
+                                  ? { ...t, projectName: e.target.value }
+                                  : t
+                              )
+                            )
+                          }
+                          className="w-full px-2 py-1 rounded"
+                        />
+                      ) : (
+                        task.projectName
+                      )}
+                    </td>
+
+                    {/* Subject */}
+                    <td className="border border-[#ffba00] px-2">
+                      {task.isNew ? (
+                        <input
+                          type="text"
+                          value={task.subject}
+                          onChange={(e) =>
+                            setTasks((prev) =>
+                              prev.map((t) =>
+                                t.id === task.id
+                                  ? { ...t, subject: e.target.value }
+                                  : t
+                              )
+                            )
+                          }
+                          className="w-full px-2 py-1 rounded"
+                        />
+                      ) : (
+                        task.subject
+                      )}
+                    </td>
+
                     {/* Created By */}
                     <td className="border border-[#ffba00] px-2">
                       {task.isNew ? (
@@ -286,7 +362,9 @@ const TaskTable = () => {
                           onChange={(e) =>
                             setTasks((prev) =>
                               prev.map((t) =>
-                                t.id === task.id ? { ...t, createdBy: e.target.value } : t
+                                t.id === task.id
+                                  ? { ...t, createdBy: e.target.value }
+                                  : t
                               )
                             )
                           }
@@ -294,87 +372,135 @@ const TaskTable = () => {
                         />
                       ) : (
                         task.createdBy
-                     )}
+                      )}
                     </td>
-            
+
                     {/* Assign To */}
                     <td className="border border-[#ffba00] px-2 relative">
                       {/* Assigned User Badge */}
                       <span
                         className="bg-blue-500 text-white px-3 py-1 rounded-full inline-block cursor-pointer"
                         onClick={() =>
-                          setAssignDropdown(assignDropdown === task.id ? null : task.id)
+                          setAssignDropdown(
+                            assignDropdown === task.id ? null : task.id
+                          )
                         }
                       >
-                        {task.assignTo} {task.assignToSurname}
-                        <FontAwesomeIcon icon={faCaretDown} className="w-5 ml-2" />
+                        
+                        {task.assignTo}
+                        <FontAwesomeIcon
+                          icon={faCaretDown}
+                          className="w-5 ml-2"
+                        />
                       </span>
-                      
+
                       {/* Dropdown - only for active task */}
                       {assignDropdown === task.id && (
                         <div className="absolute top-full left-0 w-full text-center bg-[#616262] text-white rounded-[20px] py-2 text-lg z-10 shadow-md">
-                          {[
-                                               { first: "Aman", last: "Negi" },
-                            { first: "Vishal", last: "Bisht" },
-                            { first: "Deepanshu", last: "Negi" },
-                            { first: "Jay", last: "Negi" },
-                            {first:"Bharat",last:"Khathi"}
-                          ].map((person, index) => (
+                          {assignedToUsers.map((user) => (
                             <div
-                              key={index}
+                              key={user._id}
                               className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
-                              onClick={() => {
-                                setTasks(prev =>
-                                  prev.map(t =>
+                              onClick={async () => {
+                                setTasks((prev) =>
+                                  prev.map((t) =>
                                     t.id === task.id
-                                      ? { ...t, assignTo: person.first, assignToSurname: person.last }
+                                      ? {
+                                          ...t,
+                                          assignTo: user.user,
+                                          assignToDesignation: user.designation,
+                                        }
                                       : t
                                   )
                                 );
-                                setAssignDropdown(null); // close dropdown
+
+                                try {
+                                  await axios.put(
+                                    `http://localhost:3000/api/user/signup/tasks?id=${task.id}`,
+                                    {
+                                      assignedTo: user.user,
+                                      assignedToId: user._id,
+                                      assignToDesignation: user.designation,
+                                    },
+                                    {
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                    }
+                                  );
+                                  fetchTask();
+                                } catch (error) {
+                                  console.error(
+                                    "Failed to update assigned user:",
+                                    error
+                                  );
+                                }
+
+                                setAssignDropdown(null);
                               }}
                             >
-                              {person.first} {person.last}
+                              {user.user} ({user.designation})
                             </div>
                           ))}
                         </div>
                       )}
                     </td>
 
-            
+                    {/* Assigned to Designation */}
+
+                    <td className="border border-[#ffba00] px-2">
+                      {task.assignToDesignation || "-"}
+                    </td>
+
                     {/* Date Fields */}
-                    {["inputsReceived", "startDate", "deadline", "feedbackReceived", "feedbackSent"].map(
-                      (field) => (
-                        <td key={field} className="border px-2 border-[#ffba00] relative">
-                          {task[field]}
-                          <FontAwesomeIcon
-                            icon={faCalendarDays}
-                            onClick={() => setActivePicker({ id: task.id, field })}
-                            className="text-yellow-600 cursor-pointer ml-2"
-                          />
-                          {activePicker.id === task.id && activePicker.field === field && (
+
+                    {[
+                      "inputsReceived",
+                      "startDate",
+                      "deadline",
+                      "feedbackReceived",
+                      "feedbackSent",
+                    ].map((field) => (
+                      <td
+                        key={field}
+                        className="border px-2 border-[#ffba00] relative"
+                      >
+                        {task[field]}
+                        <FontAwesomeIcon
+                          icon={faCalendarDays}
+                          onClick={() =>
+                            setActivePicker({ id: task.id, field })
+                          }
+                          className="text-yellow-600 cursor-pointer ml-2"
+                        />
+                        {activePicker.id === task.id &&
+                          activePicker.field === field && (
                             <div className="absolute z-50 mt-2">
                               <DatePicker
                                 selected={new Date()}
-                                onChange={(date) => handleCalendarChange(task.id, field, date)}
+                                onChange={(date) =>
+                                  handleCalendarChange(task.id, field, date)
+                                }
                                 inline
                               />
-                              </div>
-                            )}
-                          </td>
-                        )
-                                    )}
+                            </div>
+                          )}
+                      </td>
+                    ))}
 
-                      {/* Time */}
+                    {/* Time */}
+
                     <td className="border px-2 border-[#ffba00]">
                       {task.isNew ? (
                         <input
-                          type="date" // <-- yahan type change kiya
+                          type="date"
                           value={task.time}
                           onChange={(e) =>
                             setTasks((prev) =>
                               prev.map((t) =>
-                                t.id === task.id ? { ...t, time: e.target.value } : t
+                                t.id === task.id
+                                  ? { ...t, time: e.target.value }
+                                  : t
                               )
                             )
                           }
@@ -385,8 +511,8 @@ const TaskTable = () => {
                       )}
                     </td>
 
-                    
                     {/* Status */}
+
                     <td className="border px-2 border-[#ffba00] relative">
                       <span
                         onClick={() => setStatusDropdown(task.id)}
@@ -402,13 +528,15 @@ const TaskTable = () => {
                       >
                         {task.status} <FontAwesomeIcon icon={faCaretDown} />
                       </span>
-                      
+
                       {statusDropdown === task.id && (
                         <div className="absolute bg-[#616262] text-white w-[10vw] left-[-2vw] rounded-[20px] z-10 mt-1 py-2 shadow-md overflow-hidden">
                           {statuses.map((status) => (
                             <div
                               key={status}
-                              onClick={() => handleStatusChange(task.id, status)}
+                              onClick={() =>
+                                handleStatusChange(task.id, status)
+                              }
                               className="px-4 py-1 hover:bg-[#ffba00] cursor-pointer"
                             >
                               {status}
@@ -416,8 +544,9 @@ const TaskTable = () => {
                           ))}
                         </div>
                       )}
+
                     </td>
-                    
+
                     {/* Sent to Client / Delete */}
                     <td className="border px-2 border-[#ffba00]">
                       <button
@@ -427,18 +556,11 @@ const TaskTable = () => {
                         Close
                       </button>
                     </td>
-                </tr>
-              ))}
-            </tbody>
-
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
-          <button
-            onClick={handleAddNewUser}
-            className="mt-4 px-6 py-2 bg-[#ffba00] border border-[#ffba00] rounded-full ms-[5%]"
-          >
-            + Add New User
-          </button>
         </div>
       </div>
     </>

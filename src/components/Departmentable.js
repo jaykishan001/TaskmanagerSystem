@@ -4,43 +4,42 @@ import { useState, useEffect, useRef } from "react";
 import CreateTask from "./createuserform";
 import axios from "axios";
 
-const TaskTable = () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      name: "Aman Negi",
-      designation: "Team Head/ Lead Animator",
-      department: "Animation",
-      empLayer: "1st",
-    },
-    {
-      id: 2,
-      name: "Vishal Bisht",
-      designation: "Team Head/ Lead Marketer",
-      department: "Digital Marketing",
-      empLayer: "1st",
-    },
-  ]);
-
+const TaskTable = ({designationOption}) => {
+  const [tasks, setTasks] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [count, setCount] = useState(tasks.length + 1);
   const [searchTerm, setSearchTerm] = useState("");
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [highlightedRow, setHighlightedRow] = useState(null);
-  const [users, setUsers] = useState([]);
   const rowRefs = useRef({});
+  const [users, setUsers] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  
 
   const fetchUserData = async () => {
     try {
       const response = await axios.get(
         "http://localhost:3000/api/user/signup/createuser"
       );
-      console.log(response.data.result);
+      console.log("Department table users data", response.data);
       setUsers(response.data.result);
+      setFilteredTasks(response.data.result);
     } catch (error) {
       console.log("error", error);
     }
   };
+
+  console.log("Usersssss", users)
+  useEffect(() => {
+    if (designationOption === "All") {
+      setFilteredTasks(users);
+    } else {
+      const filtered = users.filter(
+        (user) => user.designation === designationOption
+      );
+      setFilteredTasks(filtered);
+    }
+  }, [designationOption, users]);
 
   useEffect(() => {
     fetchUserData();
@@ -179,9 +178,7 @@ const TaskTable = () => {
                     <th className="border px-4 border-yellow-500 py-2">
                       Designation
                     </th>
-                    <th className="border px-4 border-yellow-500 py-2">
-                      Department
-                    </th>
+                    
                     <th className="border px-4 border-yellow-500 py-2">
                       Emp. Layer
                     </th>
@@ -191,7 +188,7 @@ const TaskTable = () => {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {users.map((user, index) => (
+                  {filteredTasks.map((user, index) => (
                     <tr
                       key={user._id}
                       ref={(el) => (rowRefs.current[user._id] = el)}
@@ -208,20 +205,12 @@ const TaskTable = () => {
                       <td className="border px-4 border-yellow-500 py-2">
                         {user.designation}
                       </td>
-                      <td className="border px-4 border-yellow-500 py-2">
-                        {user.department}
-                      </td>
+                      
                       <td className="border px-4 border-yellow-500 py-2">
                         {user.empLayer}
                       </td>
                       <td className="border px-4 border-yellow-500 py-2">
                         <div className="flex justify-center space-x-2">
-                          {/* <button
-                            onClick={() => handleEdit(user._id)}
-                            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
-                          >
-                            Edit
-                          </button> */}
                           <button
                             onClick={() => handleDelete(user._id)}
                             className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
@@ -237,12 +226,6 @@ const TaskTable = () => {
             </div>
           </div>
 
-          {/* <button
-            onClick={handleAddNewUser}
-            className="mt-4 px-6 py-2 bg-yellow-500 border border-yellow-500 rounded-full"
-          >
-            + Add New User
-          </button> */}
         </div>
       </div>
     </>

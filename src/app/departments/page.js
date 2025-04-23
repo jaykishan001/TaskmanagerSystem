@@ -79,19 +79,28 @@ export default function TaskPage() {
 
               {isshowoption && (
                 <div className="absolute top-full left-0 w-full bg-[#616262] text-white rounded-[20px] py-2 text-lg z-10 shadow-md text-center max-h-40 overflow-y-auto">
-                  {designations.map((item) => (
-                    <div
-                      key={item._id}
-                      onClick={() => {
-                        setSelectedOption(item.designation || item.destination);
-                        setIsshowoption(false);
-                      }}
-                      className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
-                    >
-                      {item.designation || item.destination}
-                    </div>
-                  ))}
+                <div
+                  onClick={() => {
+                    setSelectedOption("All");
+                    setIsshowoption(false);
+                  }}
+                  className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
+                >
+                  All
                 </div>
+                {designations.map((item) => (
+                  <div
+                    key={item._id}
+                    onClick={() => {
+                      setSelectedOption(item.designation || item.destination);
+                      setIsshowoption(false);
+                    }}
+                    className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
+                  >
+                    {item.designation || item.destination}
+                  </div>
+                ))}
+              </div>
               )}
             </div>
           </div>
@@ -100,7 +109,7 @@ export default function TaskPage() {
 
       {/* Task Table */}
       <div className="w-full overflow-hidden">
-      <DepartmentTable />
+      <DepartmentTable  designationOption = {selectedOption} />
       </div>
     </div>
   );

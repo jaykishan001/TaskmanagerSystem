@@ -4,13 +4,31 @@ import Image from "next/image";
 import UserManagment from "@components/createmanageproject";
 import Logo from "@assets/Logo.jpeg";
 import NavigationBar from "@components/NavigationBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 export default function TaskPage() {
   const [isshowoption, setIsshowoption] = useState(false);
-  const [slectedOption, setSetSelectedOption] = useState("All");
+  const [slectedOption, setSelectedOption] = useState("All");
+  const [designations, setDesignations] = useState([]);
+  const fetchDesignation = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:3000/api/user/signup/Designation"
+      );
+      console.log("Data of designation", res.data);
+      setDesignations(res.data.data); // store data in state
+    } catch (error) {
+      console.log("Error while fetching designation", error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchDesignation();
+  }, []);
+
   return (
     <div className="min-h-screen py-6 w-full bg-white overflow-x-hidden">
       <div className="container mx-auto px-4 flex flex-col items-center">
@@ -43,55 +61,50 @@ export default function TaskPage() {
               support team.
             </p>
           </div>
+          
           <div className="flex flex-col w-[12rem]">
-            <label className="mb-2 text-center">Select Departments</label>
-
-            {/* Wrap this in a relative container */}
-            <div className="relative">
-              <div
-                onClick={() => setIsshowoption(!isshowoption)}
-                className="text-center bg-[#ffba00] rounded-full px-4 py-1 text-lg mb-1 flex items-center gap-1 justify-center cursor-pointer"
-              >
-                {slectedOption}
-                <FontAwesomeIcon icon={faCaretDown} className="w-5" />
-              </div>
-
-              {/* Dropdown below */}
-              {isshowoption && (
-                <div className="absolute top-full left-0 w-full text-center bg-[#616262] text-white rounded-[20px]  py-2 text-lg z-10 shadow-md">
-                  <div
-                    onClick={() => setSetSelectedOption("Hr")}
-                    className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
-                  >
-                    Hr
-                  </div>
-                  <div
-                    onClick={() => setSetSelectedOption("Admin")}
-                    className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
-                  >
-                    Admin
-                  </div>
-                  <div
-                    onClick={() => setSetSelectedOption("Manager")}
-                    className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
-                  >
-                    Manager
-                  </div>
-                  <div
-                    onClick={() => setSetSelectedOption("Recruiter")}
-                    className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
-                  >
-                    Recruiter
-                  </div>
-                </div>
-              )}
-            </div>
+        <label className="mb-2 text-center">Select Departments</label>
+        <div className="relative">
+          <div
+            onClick={() => setIsshowoption(!isshowoption)}
+            className="text-center bg-[#ffba00] rounded-full px-4 py-1 text-lg mb-1 flex items-center gap-1 justify-center cursor-pointer"
+          >
+            {slectedOption}
+            <FontAwesomeIcon icon={faCaretDown} className="w-5" />
           </div>
+
+          {isshowoption && (
+            <div className="absolute top-full left-0 w-full bg-[#616262] text-white rounded-[20px] py-2 text-lg z-10 shadow-md text-center max-h-40 overflow-y-auto">
+              <div
+                onClick={() => {
+                  setSelectedOption("All");
+                  setIsshowoption(false);
+                }}
+                className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
+              >
+                All
+              </div>
+              {designations.map((item) => (
+                <div
+                  key={item._id}
+                  onClick={() => {
+                    setSelectedOption(item.designation || item.destination);
+                    setIsshowoption(false);
+                  }}
+                  className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
+                >
+                  {item.designation || item.destination}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
         </div>
       </div>
       {/* Task Table */}
       <div className="w-full overflow-hidden">
-        <UserManagment />
+        <UserManagment  designationOption = {slectedOption}/>
       </div>
     </div>
   );

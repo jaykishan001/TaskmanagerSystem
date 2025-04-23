@@ -57,42 +57,6 @@ export default function TaskPage() {
         {/* Third Div */}
         <div className="flex justify-between mb-8 w-6xl">
           <div className="flex">
-            <div className="h-8 w-28"></div>
-            <p>
-              Review and organize tasks that could receive feedback from the
-              support team.
-            </p>
-          </div>
-          <div className="flex flex-col w-[12rem]">
-            <label className="mb-2 text-center">Select Departments</label>
-
-            {/* Wrap button + dropdown in a relative container */}
-            <div className="relative">
-              <div
-                onClick={() => setIsshowoption(!isshowoption)}
-                className="text-center bg-[#ffba00] rounded-full px-4 py-1 text-lg mb-1 flex items-center justify-center gap-1 cursor-pointer"
-              >
-                {selectedOption}
-                <FontAwesomeIcon icon={faCaretDown} className="w-5" />
-              </div>
-
-              {isshowoption && (
-                <div className="absolute top-full left-0 w-full bg-[#616262] text-white rounded-[20px] py-2 text-lg z-10 shadow-md text-center max-h-40 overflow-y-auto">
-                  {designations.map((item) => (
-                    <div
-                      key={item._id}
-                      onClick={() => {
-                        setSelectedOption(item.designation || item.destination);
-                        setIsshowoption(false);
-                      }}
-                      className="cursor-pointer py-1 text-sm hover:bg-[#ffba00] hover:rounded-full"
-                    >
-                      {item.designation || item.destination}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
