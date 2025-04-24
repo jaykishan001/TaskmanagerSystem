@@ -26,7 +26,7 @@ const TaskTable = ({ designationOption }) => {
   const fetchTask = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/user/signup/tasks"
+        " /api/user/signup/tasks"
       );
       console.log("response from task table", response.data.result);
   
@@ -87,7 +87,7 @@ const TaskTable = ({ designationOption }) => {
   const handleStatusChange = async (id, newStatus) => {
     console.log("Id of the task", id, newStatus);
     const response = await axios.put(
-      `http://localhost:3000/api/user/signup/tasks?id=${id}`,
+      ` /api/user/signup/tasks?id=${id}`,
       { status: newStatus },
       {
         headers: {
@@ -119,7 +119,7 @@ const TaskTable = ({ designationOption }) => {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/user/signup/tasks?id=${id}`,
+        ` /api/user/signup/tasks?id=${id}`,
         { [field]: formattedDate },
         {
           headers: {
@@ -158,7 +158,7 @@ const TaskTable = ({ designationOption }) => {
       if (!confirmDelete) return;
 
       const response = await axios.delete(
-        `http://localhost:3000/api/user/signup/tasks?id=${id}`
+        ` /api/user/signup/tasks?id=${id}`
       );
       console.log("Response of the user", response);
       fetchTask();
@@ -171,7 +171,7 @@ const TaskTable = ({ designationOption }) => {
   const handleGetAssignedTo = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/user/signup/createuser"
+        " /api/user/signup/createuser"
       );
       console.log(
         "response from assignedTo data from create tabel",
@@ -416,7 +416,7 @@ const TaskTable = ({ designationOption }) => {
 
                                 try {
                                   await axios.put(
-                                    `http://localhost:3000/api/user/signup/tasks?id=${task.id}`,
+                                    ` /api/user/signup/tasks?id=${task.id}`,
                                     {
                                       assignedTo: user.user,
                                       assignedToId: user._id,

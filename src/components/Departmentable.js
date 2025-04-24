@@ -19,7 +19,7 @@ const TaskTable = ({designationOption}) => {
   const fetchUserData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/user/signup/createuser"
+        " /api/user/signup/createuser"
       );
       console.log("Department table users data", response.data);
       setUsers(response.data.result);
@@ -90,7 +90,7 @@ const TaskTable = ({designationOption}) => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/user/signup/createuser?id=${id}`
+        ` /api/user/signup/createuser?id=${id}`
       );
       console.log("Response of the user", response);
       fetchUserData();
@@ -108,7 +108,7 @@ const TaskTable = ({designationOption}) => {
     <>
       {showForm && (
         <div className="absolute w-full h-fit flex justify-center items-center">
-          <CreateTask onData={handleChildData} onClose={handleHideForm} />
+          <CreateTask onData={handleChildData} onClose={handleHideForm} refreshAftersumbit = {fetchUserData} />
         </div>
       )}
 
@@ -166,7 +166,7 @@ const TaskTable = ({designationOption}) => {
           </div>
 
           {/* Table */}
-          <div className="h-40 w-full overflow-y-auto scrollbar rounded-lg border-2 border-yellow-500">
+          <div className="h-100 w-full overflow-y-auto scrollbar rounded-lg border-2 border-yellow-500">
             <div className="border border-yellow-500">
               <table className="text-center w-full">
                 <thead className="text-sm">

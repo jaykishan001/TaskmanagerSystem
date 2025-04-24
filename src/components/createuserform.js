@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
-export default function TaskForm({ onData, onClose }) {
+export default function TaskForm({ onData, onClose, refreshAftersumbit }) {
   const [formData, setFormData] = useState({
     user: "",
     designation: "",
@@ -25,7 +25,7 @@ export default function TaskForm({ onData, onClose }) {
   const fetchDesignation = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/api/user/signup/Designation"
+        " /api/user/signup/Designation"
       );
       console.log("Designation data", res.data);
       setDesignations(res.data.data); 
@@ -37,7 +37,7 @@ export default function TaskForm({ onData, onClose }) {
   const fetchDepartments = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/api/user/signup/Department"
+        " /api/user/signup/Department"
       );
       console.log("Department data", res.data);
       setDepartments(res.data.data); 
@@ -59,12 +59,15 @@ export default function TaskForm({ onData, onClose }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/user/signup/createuser", 
+        " /api/user/signup/createuser", 
         newUser
       );
       console.log("API Response:", response);
 
-      onData(response.data.task);
+      if (response.data && response.data.data) {
+        onData(response.data.task);
+      }
+      refreshAftersumbit();      
       onClose();
     } catch (error) {
       console.error("Error saving task:", error);

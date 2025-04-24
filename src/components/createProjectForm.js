@@ -24,7 +24,7 @@ export default function TaskForm({ onData, onClose, refreshAftersumbit }) {
   const fetchUserData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/user/signup/createuser"
+        " /api/user/signup/createuser"
       );
       console.log(
         "response from assignedTo data from create tabel",

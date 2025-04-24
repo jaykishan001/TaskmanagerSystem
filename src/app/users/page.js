@@ -16,7 +16,7 @@ export default function TaskPage() {
   const fetchDesignation = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/api/user/signup/Designation"
+        " /api/user/signup/Designation"
       );
       console.log("Data of designation", res.data);
       setDesignations(res.data.data); // store data in state

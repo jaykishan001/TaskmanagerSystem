@@ -14,7 +14,7 @@ const TaskTable = () => {
 
   const fetchDesignation = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/user/signup/Designation");
+      const res = await axios.get(" /api/user/signup/Designation");
       setDesignations(res.data.data);
     } catch (error) {
       console.error("Error while fetching designation", error);
@@ -40,7 +40,7 @@ const TaskTable = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/user/signup/Designation?id=${id}`);
+      await axios.delete(` /api/user/signup/Designation?id=${id}`);
       fetchDesignation();
     } catch (error) {
       console.error("Error deleting designation:", error);

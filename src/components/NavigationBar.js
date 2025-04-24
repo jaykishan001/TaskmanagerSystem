@@ -13,7 +13,7 @@ const NavigationBar = () => {
 
   const fetchTask = async() => {
     try {
-      const response = await axios.get("http://localhost:3000/api/user/signup/tasks")
+      const response = await axios.get(" /api/user/signup/tasks")
       setTotalCount(response.data.result.length)
     } catch (error) {
       console.log("error",error)

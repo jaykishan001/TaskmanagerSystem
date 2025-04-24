@@ -16,7 +16,7 @@ const TaskTable = ({ designationOption }) => {
   const fetchTask = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/user/signup/tasks"
+        " /api/user/signup/tasks"
       );
       console.log("response from task table", response.data.result);
 
@@ -172,7 +172,7 @@ const TaskTable = ({ designationOption }) => {
                     <td className="border border-[#ffba00] px-2">{task.startDate}</td>
                     <td className="border border-[#ffba00] px-2">{task.deadline}</td>
                     <td className="border border-[#ffba00] px-2">{task.time}</td>
-                    <td className="border border-[#ffba00] px-2">
+                    <td className="border border-[#ffba00] px-2 py-3" >
                       <span
                         className={`px-2 py-1 rounded-full text-white ${
                           {
